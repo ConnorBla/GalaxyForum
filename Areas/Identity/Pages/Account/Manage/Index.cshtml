@@ -1,0 +1,48 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Username" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Username" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Name" class="form-control" />
+                <label asp-for="Input.Name" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Location" class="form-control" />
+                <label asp-for="Input.Location" class="form-label"></label>
+            </div>
+            @* some weirdness with the "no File Selected" that ill have to fix, find a way to hide that message when there is a model.imagefilename *@
+            <div class="form-group">
+                <label asp-for="Input.Image" class="control-label"></label>
+                <input asp-for="Input.Image" class="form-control-file" />
+                <span asp-validation-for="Input.Image" class="text-danger"></span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+            {
+                <div class="form-group">
+                    <label>Current Profile Picture</label>
+                    <div>
+                        <img src="@Url.Content(Model.ImageFilename)" class="img-fluid rounded" style="max-width: 200px;" />
+                    </div>
+                </div>
+            }
+            <button id="update-profile-button" type="submit" class="w-100 mt-3 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

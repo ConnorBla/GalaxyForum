@@ -7,25 +7,31 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GalaxyForum.Data;
 using GalaxyForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace GalaxyForum.Controllers
 {
+    [Authorize]
     public class DiscussionController : Controller
     {
         private readonly GalaxyForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionController(GalaxyForumContext context)
+        public DiscussionController(GalaxyForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Discussion
-        public async Task<IActionResult> Index()
-        {
-            return View( await _context.Discussions
-                .Include(d => d.Comments)
-                .ToListAsync());
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View( await _context.Discussions
+        //        .Include(d => d.Comments)
+        //        .Where(d => d.ApplicationUserId == _userManager.GetUserId(User))
+        //        .ToListAsync());
+        //}
 
         // GET: Discussion/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -55,16 +61,16 @@ namespace GalaxyForum.Controllers
 
         // POST: Discussion/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title, Content")] Discussion discussion, IFormFile? ImageFile)
+        public async Task<IActionResult> Create([Bind("Title, Content")] Discussion discussion, IFormFile? ImageFile = null)
         {
-
+            discussion.ApplicationUserId = _userManager.GetUserId(User);
 
             if (ModelState.IsValid)
             {
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     string newFileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+
                     string filePath = Path.Combine("wwwroot", "images", newFileName);
                     string relativePath = Path.Combine("images", newFileName);
 
@@ -77,13 +83,15 @@ namespace GalaxyForum.Controllers
                 }
 
                 discussion.CreateDate = DateTime.Now;
+
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("GetDiscussion", "Home", new { id = discussion.DiscussionId });
             }
             return View(discussion);
         }
-    
+
 
 
         // GET: Discussion/Edit/5
@@ -99,25 +107,52 @@ namespace GalaxyForum.Controllers
             {
                 return NotFound();
             }
+
+            if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+            {
+                Console.WriteLine("current user    = " + _userManager.GetUserId(User));
+                Console.WriteLine("discussion user = " + discussion.ApplicationUserId);
+                return Forbid();
+            }
+
             return View(discussion);
         }
 
         // POST: Discussion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFilename,ApplicationUserId")] Discussion discussion, IFormFile? ImageFile = null)
         {
             if (id != discussion.DiscussionId)
             {
                 return NotFound();
             }
 
+            if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+            {
+                Console.WriteLine("current user    = " + _userManager.GetUserId(User));
+                Console.WriteLine("discussion user = " + discussion.ApplicationUserId);
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (ImageFile != null && ImageFile.Length > 0)
+                    {
+                        string newFileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
+
+                        string filePath = Path.Combine("wwwroot", "images", newFileName);
+                        string relativePath = Path.Combine("images", newFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await ImageFile.CopyToAsync(stream);
+                        }
+
+                        discussion.ImageFilename = relativePath;
+                    }
+
                     _context.Update(discussion);
                     await _context.SaveChangesAsync();
                 }
@@ -132,10 +167,11 @@ namespace GalaxyForum.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("GetDiscussion", "Home", new { id = discussion.DiscussionId });
             }
             return View(discussion);
         }
+
 
         // GET: Discussion/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -152,21 +188,31 @@ namespace GalaxyForum.Controllers
                 return NotFound();
             }
 
+            if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+            {
+                return Forbid();
+            }
+
             return View(discussion);
         }
 
         // POST: Discussion/Delete/5
+
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var discussion = await _context.Discussions.FindAsync(id);
             if (discussion != null)
             {
+                if (discussion.ApplicationUserId != _userManager.GetUserId(User))
+                {
+                    return Forbid();
+                }
+
                 _context.Discussions.Remove(discussion);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

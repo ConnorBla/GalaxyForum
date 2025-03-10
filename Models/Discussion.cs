@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml.Linq;
+﻿using GalaxyForum.Data;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GalaxyForum.Models
 {
     public class Discussion
     {
-        public int DiscussionId { get; set; }  // Primary key
-        public string Title { get; set; }
-        public string Content { get; set; }
+        public int DiscussionId { get; set; }  
+        public string Title { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public string? ImageFilename { get; set; }
         public DateTime CreateDate { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
+        public string ApplicationUserId { get; set; } = string.Empty;
 
-        public ICollection<Comment>? Comments
-        {
-            get; set;
-        }
+        public ApplicationUser? ApplicationUser { get; set; }
+
+        [NotMapped]
+        public IFormFile? Image { get; set; }
     }
 }
-

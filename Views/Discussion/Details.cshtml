@@ -7,10 +7,10 @@
 <div class="container pt-5 mt-0 bg-dark">
     <div class="card bg-dark text-white shadow-sm rounded-3">
         <div class="card-body">
-            <!-- Title, left-aligned -->
+            <!-- Title -->
             <h1 class="card-title text-start bg-primary p-3 rounded-3">@Html.DisplayFor(model => model.Title)</h1>
             <br class="text-break" />
-            <!-- Picture (if available) -->
+
             @if (!string.IsNullOrEmpty(Model.ImageFilename))
             {
                 <div class="text-center my-4">
@@ -104,5 +104,4 @@
         }
     </script>
 }
-
 

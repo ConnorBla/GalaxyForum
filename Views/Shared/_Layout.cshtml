@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/GalaxyForum.styles.css" asp-append-version="true" />
     <style>
         body {
-            background: linear-gradient(145deg, #13134f, #0e0e3b);
+            background: linear-gradient(145deg, #1a2a6c, #b21f1f, #fdbb2d);
             color: white;
             border: none;
             border-radius: 12px;
@@ -37,8 +37,8 @@
         }
     </style>
 </head>
-<body>
 
+<body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark">
             <div class="container-fluid">
@@ -51,20 +51,18 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <!-- This is for later, i remember we are adding some kind of user validation -->
-                            <a class="nav-link" asp-area="" asp-controller="Discussion" asp-action="Index">Your Discussions</a>
-                        </li>
+                        
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Discussion" asp-action="Create">Create</a>
                         </li>
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container mt-4 ">
+    <div class="container mt-4 h-75">
         <main role="main" class="pb-3 ">
             @RenderBody()
         </main>

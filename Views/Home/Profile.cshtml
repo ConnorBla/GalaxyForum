@@ -1,0 +1,72 @@
+﻿@model GalaxyForum.Models.ProfileViewModel
+
+@{
+	ViewData["Title"] = "Profile";
+}
+
+@* https://localhost:7158/home/profile/db95fa87-47b2-4b7e-873e-2e0a2be4a2f6 *@
+<div class="container pt-5 mt-0">
+	<div class="card shadow-sm rounded-3">
+		<div class="card-body">
+			<div class="d-flex align-items-center m-0">
+				@if (!string.IsNullOrEmpty(Model.User.ImageFilename))
+				{
+					{
+						Console.WriteLine(@Model.User.ImageFilename.ToString());
+					}
+					<img src="@Url.Content(@Model.User.ImageFilename)" class="rounded-circle me-3" style="width: 100px; height: 100px; object-fit: cover;" />
+				}
+				else
+				{
+					<img src="https://i.pinimg.com/474x/47/ba/71/47ba71f457434319819ac4a7cbd9988e.jpg" class="rounded-circle me-3" style="width: 100px; height: 100px; object-fit: cover;" />
+				}
+				<div class="m-0">
+					<h1 class="card-title text-start rounded-3"><strong>@Model.User.Name</strong></h1>
+					@* <p class="text-muted">Email: @Model.User.Email</p> *@
+					<p class="text-muted">Location: @Model.User.Location</p>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		@if (Model.Discussions.Count == 0)
+		{
+			<p class="text-muted text-center mt-4">No discussions yet.</p>
+		}
+		else
+		{
+			<h1 class="text-center mt-4">Your Discussions</h1>
+			@foreach (var d in Model.Discussions)
+			{
+				<a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@d.DiscussionId"
+				   class="text-decoration-none">
+					<div class="card shadow-sm rounded-3 mt-4">
+						<div class="card-body d-flex">
+							@if (!string.IsNullOrEmpty(d.ImageFilename))
+							{
+								<img src="@Url.Content("~/" + d.ImageFilename)" class="img-fluid rounded-3 img-thumbnail me-3" style="max-width: 150px; height: auto;" />
+							}
+							<div>
+								<h5 class="card-title">@d.Title</h5>
+								<p class="card-text">@d.CreateDate.ToShortDateString() @d.CreateDate.ToShortTimeString()</p>
+								@if (d.Content.ToString().Length > 200)
+								{
+									<p class="card-text">
+										@d.Content.ToString().Substring(0, 195) [...]
+									</p>
+								}
+								else
+								{
+									<p class="card-text">
+										@d.Content.ToString()
+									</p>
+								}
+							</div>
+						</div>
+					</div>
+				</a>
+			}
+		}
+	</div>
+</div>

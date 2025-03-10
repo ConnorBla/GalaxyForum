@@ -47,8 +47,8 @@
                                 <small class="ms-2">Comments: @(discussion.Comments != null ? discussion.Comments.Count(): 0)</small>
                             </div>
                             <div class="col text-end">
-                                <a asp-action="Details" asp-controller="Discussion" asp-route-id="@discussion.DiscussionId" class="btn btn-outline-light btn-sm">View Details</a>
-                                <a asp-action="Delete" asp-route-id="@discussion.DiscussionId" class="btn btn-danger btn-sm ms-2">Delete</a>
+                                <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@discussion.DiscussionId" class="btn btn-outline-light btn-sm">View Details</a>
+
                             </div>
                         </div>
                     </div>

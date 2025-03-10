@@ -1,22 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GalaxyForum.Data;
 using GalaxyForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace GalaxyForum.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly GalaxyForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CommentsController(GalaxyForumContext context)
+        public CommentsController(GalaxyForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Comments/Create
         public IActionResult Create(int discussionId)
         {
-            // Pass DiscussionId to the view for hidden field usage
             var comment = new Comment { DiscussionId = discussionId };
             return View(comment);
         }
@@ -28,13 +32,13 @@ namespace GalaxyForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                comment.ApplicationUserId = _userManager.GetUserId(User);
                 comment.CreateDate = DateTime.Now;
-                comment.Discussion = await _context.Discussions.FindAsync(comment.DiscussionId);
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
 
-                // Redirect to the Details action of the DiscussionController
-                return RedirectToAction("Details", "Discussion" , new { id = comment.DiscussionId });
+                // Redirect to the Details action of the DiscussionsController
+                return RedirectToAction("GetDiscussion", "Home", new { id = comment.DiscussionId });
             }
             return View(comment);
         }
