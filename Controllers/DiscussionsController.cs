@@ -213,7 +213,7 @@ namespace GalaxyForum.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("index", "Home");
         }
 
         private bool DiscussionExists(int id)
