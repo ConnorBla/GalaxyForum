@@ -33,6 +33,7 @@ namespace GalaxyForum.Controllers
             if (ModelState.IsValid)
             {
                 comment.ApplicationUserId = _userManager.GetUserId(User);
+                comment.ApplicationUser = await _userManager.GetUserAsync(User);
                 comment.CreateDate = DateTime.Now;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();

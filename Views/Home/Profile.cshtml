@@ -14,7 +14,7 @@
 					{
 						Console.WriteLine(@Model.User.ImageFilename.ToString());
 					}
-					<img src="@Url.Content(@Model.User.ImageFilename)" class="rounded-circle me-3" style="width: 100px; height: 100px; object-fit: cover;" />
+					<img src="@Url.Content(@Model.User.ImageFilename.ToString())" class="rounded-circle me-3" style="width: 100px; height: 100px; object-fit: cover;" />
 				}
 				else
 				{
@@ -36,7 +36,7 @@
 		}
 		else
 		{
-			<h1 class="text-center mt-4">Your Discussions</h1>
+			<h1 class="text-center mt-4">User's Discussions</h1>
 			@foreach (var d in Model.Discussions)
 			{
 				<a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@d.DiscussionId"

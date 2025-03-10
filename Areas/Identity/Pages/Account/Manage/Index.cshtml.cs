@@ -55,8 +55,6 @@ public class IndexModel : PageModel
         var location = user.Location;
         var imageFilename = user.ImageFilename;
 
-        Username = userName;
-
         Input = new InputModel
         {
             Name = name,
@@ -99,12 +97,13 @@ public class IndexModel : PageModel
         if (Input.Image != null)
         {
             var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(Input.Image.FileName)}";
-            var filePath = Path.Combine("wwwroot/images/profiles", uniqueFileName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profiles");
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await Input.Image.CopyToAsync(stream);
             }
-            user.ImageFilename = "/images/profiles/" + uniqueFileName;
+            user.ImageFilename = $"/images/profiles/{uniqueFileName}";
         }
 
         var result = await _userManager.UpdateAsync(user);

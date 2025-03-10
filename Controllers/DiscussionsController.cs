@@ -142,7 +142,7 @@ namespace GalaxyForum.Controllers
                     {
                         string newFileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
 
-                        string filePath = Path.Combine("wwwroot", "images", newFileName);
+                        string filePath = Path.Combine("wwwroot/images", newFileName);
                         string relativePath = Path.Combine("images", newFileName);
 
                         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -213,7 +213,7 @@ namespace GalaxyForum.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("index", "Home");
+            return RedirectToAction("index", "home");
         }
 
         private bool DiscussionExists(int id)

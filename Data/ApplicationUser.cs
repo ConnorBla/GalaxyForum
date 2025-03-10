@@ -13,7 +13,7 @@ namespace GalaxyForum.Data
         public string? Location { get; set; } = string.Empty;
 
         [PersonalData]
-        public string? ImageFilename { get; set; } = string.Empty;
+        public string? ImageFilename { get; set; }
 
         [NotMapped]
         public IFormFile? Image { get; set; }

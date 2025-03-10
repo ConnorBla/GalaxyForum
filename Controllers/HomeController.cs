@@ -41,8 +41,9 @@ namespace GalaxyForum.Controllers
 
         public IActionResult GetDiscussion(int id)
         {
+            //chatgpt assisted 
             var discussion = _context.Discussions
-                .Include(d => d.Comments)
+                .Include(d => d.Comments!.Where(c => c != null)).ThenInclude(c => c.ApplicationUser)
                 .Include(d => d.ApplicationUser)
                 .FirstOrDefault(d => d.DiscussionId == id);
 
